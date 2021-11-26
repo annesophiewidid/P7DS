@@ -1,0 +1,3 @@
+(base) C:\Users\glass>cd "C:\Users\glass\projects\api\"
+
+(base) C:\Users\glass\projects\api>streamlit run dashboard.py
