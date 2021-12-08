@@ -51,14 +51,14 @@ df = pd.read_csv(f,
                  dtype={'Special': 'object'}
                  )
 
-@st.cache #mise en cache de la fonction pour exécution unique
-def chargement_explanation(id_input, df, model, sample):
-    return interpretation(str(id_input), df, model, sample=sample)
+# @st.cache #mise en cache de la fonction pour exécution unique
+# def chargement_explanation(id_input, df, model, sample):
+#     return interpretation(str(id_input), df, model, sample=sample)
 
 
-@st.cache #mise en cache de la fonction pour exécution unique
-def chargement_ligne_data(id, df):
-    return df[df['SK_ID_CURR']==int(id)].drop(['Unnamed: 0', 'Unnamed: 0.1'], axis=1)
+# @st.cache #mise en cache de la fonction pour exécution unique
+# def chargement_ligne_data(id, df):
+#     return df[df['SK_ID_CURR']==int(id)].drop(['Unnamed: 0', 'Unnamed: 0.1'], axis=1)
 
 liste_id = df['SK_ID_CURR'].tolist()
 
@@ -66,6 +66,9 @@ df_pay = df[df.TARGET == 0]
 df_unpay = df[df.TARGET == 1]
 X = df.drop(columns=['TARGET'])
 y = df['TARGET']
+
+print(X.shape)
+
 
 
 #affichage formulaire
@@ -88,20 +91,7 @@ elif (int(id_input) in liste_id):
 
 #affichage de la jauge de probabilité
 
-    jauge = go.Figure(go.Indicator(
-    domain = {'x': [0, 1], 'y': [0, 1]},
-    # value = int(df[df['SK_ID_CURR']==id_input]["Probabilité"]*100),
-    mode = "gauge+number",
-    title = {'text': "Probabilité de défaut de paiement (en pourcentage)"},
-    gauge = {'axis': {'range': [None, 100]},
-              'bar': {'color': "darkgrey"},
-              'bgcolor': "red",
-              'steps' : [
-                  {'range': [0, 35], 'color': "green"},
-                  {'range': [35, 60], 'color': "orange"}],
-              'threshold' : {'line': {'color': "black", 'width': 4}, 'thickness': 0.75, 'value': 50}}))
-
-    st.write(jauge)
+    
 
 # affichage des informations clients
 
@@ -133,32 +123,57 @@ elif (int(id_input) in liste_id):
 
     #st.markdown(chaine)
 
-st.subheader("Caractéristiques influençant le score")
+    st.subheader("Caractéristiques influençant le score")
 
-#chargement du preprocessor
-loaded_model = joblib.load('preprocessor.pkl')
-#chargement du modèle
-loaded_model = joblib.load('model.pkl')
 
+    #chargement du preprocessor
+    loaded_preprocessor = joblib.load('preprocessor.pkl')
+    #chargement du modèle
+    loaded_model = joblib.load('model.pkl')
+    
+    data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
+    
+    st.write(data_clientunique.shape)
+    
+    
+    data_clientunique=loaded_preprocessor.transform(data_clientunique)
+    st.write(data_clientunique.shape)
+    score_client=loaded_model.predict_proba(data_clientunique)
+    st.write(score_client[0])
+    
+    jauge = go.Figure(go.Indicator(
+    domain = {'x': [0, 1], 'y': [0, 1]},
+    value = score_client[0][0]*100,
+    mode = "gauge+number",
+    title = {'text': "Probabilité de défaut de paiement (en pourcentage)"},
+    gauge = {'axis': {'range': [None, 100]},
+              'bar': {'color': "darkgrey"},
+              'bgcolor': "red",
+              'steps' : [
+                  {'range': [0, 35], 'color': "green"},
+                  {'range': [35, 60], 'color': "orange"}],
+              'threshold' : {'line': {'color': "black", 'width': 4}, 'thickness': 0.75, 'value': 50}}))
+
+    st.write(jauge)
     
 #affichage de l'explication du score
-with st.spinner('Chargement des détails de la prédiction...'):
-    explanation = chargement_explanation(str(id_input), df,loaded_model(),sample=False)
-    st.success('Done!')
+# with st.spinner('Chargement des détails de la prédiction...'):
+#     explanation = chargement_explanation(str(id_input), df,loaded_model,sample=False)
+#     st.success('Done!')
     
 #Affichage des graphes    
-graphes_streamlit(explanation)
+# graphes_streamlit(explanation)
 
-st.subheader("Définition des groupes")
-st.markdown("\
-                \n\
-    * Client : la valeur pour le client considéré\n\
-    * Moyenne : valeur moyenne pour l'ensemble des clients\n\
-    * En Règle : valeur moyenne pour l'ensemble des clients en règle\n\
-    * En Défaut : valeur moyenne pour l'ensemble des clients en défaut\n\
-    * Similaires : valeur moyenne pour les 20 clients les plus proches du client\
-    considéré sur les critères sexe/âge/revenu/durée/montant du crédit\n\n\
-        ")
+# st.subheader("Définition des groupes")
+# st.markdown("\
+    #             \n\
+    # * Client : la valeur pour le client considéré\n\
+    # * Moyenne : valeur moyenne pour l'ensemble des clients\n\
+    # * En Règle : valeur moyenne pour l'ensemble des clients en règle\n\
+    # * En Défaut : valeur moyenne pour l'ensemble des clients en défaut\n\
+    # * Similaires : valeur moyenne pour les 20 clients les plus proches du client\
+    # considéré sur les critères sexe/âge/revenu/durée/montant du crédit\n\n\
+    #     ")
 
     #Affichage du dataframe d'explicabilité
     #st.write(explanation)
