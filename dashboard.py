@@ -59,6 +59,7 @@ st.title('Calculez le score de votre client')
 st.subheader("Prédictions de scoring client")
 id_input = st.text_input('Veuillez saisir l\'identifiant de\'votre client:', )
 chaine = "l'id Saisi est " + str(id_input)
+
 st.write(chaine)
 
 sample_en_regle = str(list(df[df['TARGET'] == 0].sample(5)[['SK_ID_CURR', 'TARGET']]['SK_ID_CURR'].values)).replace('\'', '').replace('[', '').replace(']','')
@@ -81,11 +82,9 @@ elif (int(id_input) in liste_id):
     loaded_model = joblib.load('model.pkl')
     
     data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
-    
-    #st.write(data_clientunique.shape)     
+     
     data_clientunique=loaded_preprocessor.transform(data_clientunique)
-    
-    #st.write(data_clientunique.shape)
+        
     score_client=loaded_model.predict_proba(data_clientunique)
     st.write(score_client[0])
     
@@ -126,21 +125,88 @@ elif (int(id_input) in liste_id):
     FEATURENAMES = FEATURELIST["0"].tolist()
 
 #Affichage des graphes
+
+#visualisation des variables les + importantes pour ce client
+    st.title('quelles variables expliquent ce score ?')
     shap.initjs()
     fig=shap.force_plot(explainer.expected_value[1],shap_values[1][0],feature_names=FEATURENAMES, show=False, matplotlib=True)   
     st.pyplot(fig)
     
-    nbr = df_pay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
-    nbr.reset_index(0, inplace=True)
-    nbr.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+#visualisation d'une variable en particulier et comparaison avec ce client
+
     
-    fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))
-    fig1=sns.histplot(data=nbr, x="AMT_CREDIT", kde=True, ax=axes[0], color="#00afe6", alpha=0.6)
-    axes[0].set_title("AMT_CREDIT", color='#2cb7b0')
-    fig1, ax = plt.subplots()    
+    #AMT CREDIT
+    st.title('Comparaison du client avec les bons payeurs et avec les mauvais payeurs')
     
-    st.pyplot(fig1)
-
-
-
+    dataclient = df.loc[df['SK_ID_CURR'] == 238876]
+    credit_customer = dataclient[['SK_ID_CURR','AMT_CREDIT','DAYS_BIRTH','EXT_SOURCE_3']]
+    st.write(credit_customer)
+    
+    st.subheader('Regardons le montant du crédit...')
+    st.subheader('pour les BONS PAYEURS')
+    credit_pay = df_pay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
+    credit_pay.reset_index(0, inplace=True)
+    credit_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+    chart_data = pd.DataFrame(credit_pay,columns=['AMT_CREDIT'])
+    st.line_chart(chart_data)
+    
+    st.subheader('pour les MAUVAIS PAYEURS')
+    credit_unpay = df_unpay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
+    credit_unpay.reset_index(0, inplace=True)
+    credit_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+    chart_data1 = pd.DataFrame(credit_unpay,columns=['AMT_CREDIT'])
+    st.line_chart(chart_data1)
+    
+    #AGE
+    st.subheader('Regardons leur age...')
+    st.subheader('celui des BONS PAYEURS')
+    age_pay = df_pay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
+    age_pay.reset_index(0, inplace=True)
+    age_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+    chart_data2 = pd.DataFrame(age_pay,columns=['DAYS_BIRTH'])
+    st.line_chart(chart_data2)
+    
+    st.subheader('celui des MAUVAIS PAYEURS')
+    age_unpay = df_unpay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
+    age_unpay.reset_index(0, inplace=True)
+    age_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+    chart_data3 = pd.DataFrame(age_unpay,columns=['DAYS_BIRTH'])
+    st.line_chart(chart_data3)
+    
+    #EXT_SOURCE_3
+    st.subheader('Regardons EXT_SOURCE_3..')
+    st.subheader('celui des BONS PAYEURS')
+    EXT_SOURCE_3_pay = df_pay[['SK_ID_CURR','EXT_SOURCE_3']].groupby('EXT_SOURCE_3').count().sort_values(by='SK_ID_CURR', ascending=False)
+    EXT_SOURCE_3_pay.reset_index(0, inplace=True)
+    EXT_SOURCE_3_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+    chart_data3 = pd.DataFrame(EXT_SOURCE_3_pay,columns=['EXT_SOURCE_3'])
+    st.line_chart(chart_data3)
+    
+    st.subheader('celui des MAUVAIS PAYEURS')
+    EXT_SOURCE_3_unpay = df_unpay[['SK_ID_CURR','EXT_SOURCE_3']].groupby('EXT_SOURCE_3').count().sort_values(by='SK_ID_CURR', ascending=False)
+    EXT_SOURCE_3_unpay.reset_index(0, inplace=True)
+    EXT_SOURCE_3_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+    chart_data4 = pd.DataFrame(EXT_SOURCE_3_unpay,columns=['EXT_SOURCE_3'])
+    st.line_chart(chart_data4)
+    
+    # fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))
+    # sns.histplot(data=nbr, x="AMT_CREDIT", kde=True, ax=axes[0], color="#00afe6", alpha=0.6)
+    # axes[0].set_title("AMT_CREDIT", color='#2cb7b0')
+    # fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))  
+    
+    # st.pyplot(fig1)
+    
+    
+    # nbr1 = df_pay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
+    # nbr1.reset_index(0, inplace=True)
+    # nbr1.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    # st.write(nbr1)
+    # chart_data = pd.DataFrame(nbr,columns=['DAYS_BIRTH'])
+    # st.line_chart(chart_data)
 
