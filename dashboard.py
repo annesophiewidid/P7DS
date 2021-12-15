@@ -86,7 +86,7 @@ elif (int(id_input) in liste_id):
     data_clientunique=loaded_preprocessor.transform(data_clientunique)
         
     score_client=loaded_model.predict_proba(data_clientunique)
-    st.write(score_client[0])
+    
     
 #affichage de la jauge de probabilité  
     jauge = go.Figure(go.Indicator(
@@ -137,8 +137,7 @@ elif (int(id_input) in liste_id):
     
     #AMT CREDIT
     st.title('Comparaison du client avec les bons payeurs et avec les mauvais payeurs')
-    
-    dataclient = df.loc[df['SK_ID_CURR'] == 238876]
+    dataclient = df.loc[df['SK_ID_CURR'] == int(id_input)]
     credit_customer = dataclient[['SK_ID_CURR','AMT_CREDIT','DAYS_BIRTH','EXT_SOURCE_3']]
     st.write(credit_customer)
     
@@ -195,18 +194,43 @@ elif (int(id_input) in liste_id):
     chart_data4 = pd.DataFrame(EXT_SOURCE_3_unpay,columns=['EXT_SOURCE_3'])
     st.line_chart(chart_data4)
     
-    # fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))
-    # sns.histplot(data=nbr, x="AMT_CREDIT", kde=True, ax=axes[0], color="#00afe6", alpha=0.6)
-    # axes[0].set_title("AMT_CREDIT", color='#2cb7b0')
-    # fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))  
-    
-    # st.pyplot(fig1)
-    
-    
+      
     # nbr1 = df_pay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
     # nbr1.reset_index(0, inplace=True)
     # nbr1.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    # st.write(nbr1)
-    # chart_data = pd.DataFrame(nbr,columns=['DAYS_BIRTH'])
-    # st.line_chart(chart_data)
 
+    # fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))
+    # sns.histplot(data=nbr1, x="AMT_CREDIT", kde=True, ax=axes[0], color="#00afe6", alpha=0.6)
+    # axes[0].set_title("AMT_CREDIT", color='#2cb7b0')
+    # fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))
+    
+    # st.pyplot(fig1)
+
+    # Data   
+    credit = df[['AMT_CREDIT','SK_ID_CURR']].sort_values(by=['AMT_CREDIT'])
+
+    # # Plot
+    # fig = plt.figure(figsize=(12,8))
+    # plt.scatter( 'SK_ID_CURR','AMT_CREDIT', data=credit)
+ 
+    # # Annotation
+    # z=credit.loc[df['SK_ID_CURR'] == int(id_input)]
+    # a=z['AMT_CREDIT'].iloc[0]
+    # plt.axvline(a, color='r')
+    
+    # # Show the graph
+    # st.pyplot(fig)
+    
+        # Plot
+    fig, ax = plt.subplots(figsize = (12, 12))
+    plt.title('répartition clients par montant du crédit')
+   
+    ax.hist(credit['AMT_CREDIT'], bins=100,edgecolor="black")
+ 
+    # Annotation
+    # z=credit.loc[df['SK_ID_CURR'] == int(id_input)]
+    # a=z['AMT_CREDIT'].iloc[0]
+    # plt.axvline(a, color='r')
+    
+    # Show the graph
+    st.pyplot(fig)
