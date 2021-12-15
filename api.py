@@ -7,26 +7,44 @@ Created on Mon Dec  6 19:17:59 2021
 
 from flask import Flask
 from flask_restful import Resource, Api, abort
+import os
+import pandas as pd
+import joblib
 
 app = Flask(__name__)
 api = Api(app)
 
-CLIENTS= {}
+PATH = os.getcwd()
+PATH += "\\"
+f = PATH+'application_train.csv'
 
-def abort_if_client_doesnt_exist(client_id):
-    if client_id not in CLIENTS:
-        abort(404, message="Client {} doesn't exist".format(client_id))
+df = pd.read_csv(f,
+                 low_memory=False,
+                 verbose=False,
+                 encoding='ISO-8859-1',
+                 dtype={'Special': 'object'}
+                 )
+X = df.drop(columns=['TARGET'])
+y = df['TARGET']
 
-# sélectionner un client
+CLIENTS= {X}
 
-    def get(self, client_id):
-        abort_if_client_doesnt_exist(client_id)
-        return CLIENTS[client_id]
+#chargement du preprocessor
+loaded_preprocessor = joblib.load('preprocessor.pkl')
+    
+#chargement du modèle
+loaded_model = joblib.load('model.pkl')
 
-    def delete(self, client_id):
-        abort_if_client_doesnt_exist(client_id)
-        del CLIENTS[client_id]
-        return '', 204
+
+client_id = X[X['SK_ID_CURR']==int(id_input)]
+client_id=loaded_preprocessor.transform(client_id)
+score_client=loaded_model.predict_proba(client_id)
+
+class Prediction(Resource):
+    def get(self, client_id):   
+        return "score_client"
+
+api.add_resource(Prediction, '/prediction/<int:client_id>/')
 
 if __name__ == '__main__':
     app.run(debug=True)
