@@ -132,105 +132,155 @@ elif (int(id_input) in liste_id):
     fig=shap.force_plot(explainer.expected_value[1],shap_values[1][0],feature_names=FEATURENAMES, show=False, matplotlib=True)   
     st.pyplot(fig)
     
-#visualisation d'une variable en particulier et comparaison avec ce client
+#SELECTION D UNE VARIABLE POUR COMPARER CE CLIENT AUX AUTRES
 
-    
-    #AMT CREDIT
-    st.title('Comparaison du client avec les bons payeurs et avec les mauvais payeurs')
-    dataclient = df.loc[df['SK_ID_CURR'] == int(id_input)]
-    credit_customer = dataclient[['SK_ID_CURR','AMT_CREDIT','DAYS_BIRTH','EXT_SOURCE_3']]
-    st.write(credit_customer)
-    
-    st.subheader('Regardons le montant du crédit...')
-    st.subheader('pour les BONS PAYEURS')
-    credit_pay = df_pay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
-    credit_pay.reset_index(0, inplace=True)
-    credit_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
-    chart_data = pd.DataFrame(credit_pay,columns=['AMT_CREDIT'])
-    st.line_chart(chart_data)
-    
-    st.subheader('pour les MAUVAIS PAYEURS')
-    credit_unpay = df_unpay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
-    credit_unpay.reset_index(0, inplace=True)
-    credit_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
-    chart_data1 = pd.DataFrame(credit_unpay,columns=['AMT_CREDIT'])
-    st.line_chart(chart_data1)
-    
-    #AGE
-    st.subheader('Regardons leur age...')
-    st.subheader('celui des BONS PAYEURS')
-    age_pay = df_pay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
-    age_pay.reset_index(0, inplace=True)
-    age_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
-    chart_data2 = pd.DataFrame(age_pay,columns=['DAYS_BIRTH'])
-    st.line_chart(chart_data2)
-    
-    st.subheader('celui des MAUVAIS PAYEURS')
-    age_unpay = df_unpay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
-    age_unpay.reset_index(0, inplace=True)
-    age_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
-    chart_data3 = pd.DataFrame(age_unpay,columns=['DAYS_BIRTH'])
-    st.line_chart(chart_data3)
-    
-    #EXT_SOURCE_3
-    st.subheader('Regardons EXT_SOURCE_3..')
-    st.subheader('celui des BONS PAYEURS')
-    EXT_SOURCE_3_pay = df_pay[['SK_ID_CURR','EXT_SOURCE_3']].groupby('EXT_SOURCE_3').count().sort_values(by='SK_ID_CURR', ascending=False)
-    EXT_SOURCE_3_pay.reset_index(0, inplace=True)
-    EXT_SOURCE_3_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
-    chart_data3 = pd.DataFrame(EXT_SOURCE_3_pay,columns=['EXT_SOURCE_3'])
-    st.line_chart(chart_data3)
-    
-    st.subheader('celui des MAUVAIS PAYEURS')
-    EXT_SOURCE_3_unpay = df_unpay[['SK_ID_CURR','EXT_SOURCE_3']].groupby('EXT_SOURCE_3').count().sort_values(by='SK_ID_CURR', ascending=False)
-    EXT_SOURCE_3_unpay.reset_index(0, inplace=True)
-    EXT_SOURCE_3_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
-    chart_data4 = pd.DataFrame(EXT_SOURCE_3_unpay,columns=['EXT_SOURCE_3'])
-    st.line_chart(chart_data4)
-    
-      
-    # nbr1 = df_pay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
-    # nbr1.reset_index(0, inplace=True)
-    # nbr1.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-
-    # fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))
-    # sns.histplot(data=nbr1, x="AMT_CREDIT", kde=True, ax=axes[0], color="#00afe6", alpha=0.6)
-    # axes[0].set_title("AMT_CREDIT", color='#2cb7b0')
-    # fig1, axes = plt.subplots(nrows=1,ncols=2, sharex=False, sharey=False, figsize=(20,8))
-    
-    # st.pyplot(fig1)
+#AMT_CREDIT
+if st.button('Montant du crédit - AMT CREDIT'):
 
     # Data   
     credit = df[['AMT_CREDIT','SK_ID_CURR']].sort_values(by=['AMT_CREDIT'])
-
-    # # Plot
-    # fig = plt.figure(figsize=(12,8))
-    # plt.scatter( 'SK_ID_CURR','AMT_CREDIT', data=credit)
- 
-    # # Annotation
-    # z=credit.loc[df['SK_ID_CURR'] == int(id_input)]
-    # a=z['AMT_CREDIT'].iloc[0]
-    # plt.axvline(a, color='r')
     
-    # # Show the graph
-    # st.pyplot(fig)
-    
-        # Plot
+    # Plot
     fig, ax = plt.subplots(figsize = (12, 12))
     plt.title('répartition clients par montant du crédit')
-   
     ax.hist(credit['AMT_CREDIT'], bins=100,edgecolor="black")
- 
-    # Annotation
-    # z=credit.loc[df['SK_ID_CURR'] == int(id_input)]
-    # a=z['AMT_CREDIT'].iloc[0]
-    # plt.axvline(a, color='r')
     
+    # Label and coordinate
+    z=credit.loc[df['SK_ID_CURR'] == int(id_input)]
+    a=z['AMT_CREDIT'].iloc[0]
+    plt.axvline(a, color='r')
+     
     # Show the graph
     st.pyplot(fig)
+    
+#DAYS_BIRTH
+if st.button('Age du client - DAYS_BIRTH'):
+    
+    # Data   
+    daysbirth = df[['DAYS_BIRTH','SK_ID_CURR']].sort_values(by=['DAYS_BIRTH'])    
+        
+    # Plot
+    fig, ax = plt.subplots(figsize = (12, 12))
+    plt.title('répartition clients par age')
+    ax.hist(daysbirth['DAYS_BIRTH'], bins=100,edgecolor="black")
+    
+    # Label and coordinate
+    z=daysbirth.loc[df['SK_ID_CURR'] == int(id_input)]
+    a=z['DAYS_BIRTH'].iloc[0]
+    plt.axvline(a, color='r')
+     
+    # Show the graph
+    st.pyplot(fig)
+    
+   #EXT_SOURCE_3
+if st.button('Source externe 3 - EXT_SOURCE_3'):
+     
+    # Data   
+     extsource3 = df[['EXT_SOURCE_3','SK_ID_CURR']].sort_values(by=['EXT_SOURCE_3'])     
+     # Plot
+     fig, ax = plt.subplots(figsize = (12, 12))
+     plt.title('répartition clients par EXT_SOURCE_3')
+     ax.hist(extsource3['EXT_SOURCE_3'], bins=100,edgecolor="black")
+    
+     # # Label and coordinate
+     z=extsource3.loc[df['SK_ID_CURR'] == int(id_input)]
+     a=z['EXT_SOURCE_3'].iloc[0]
+     plt.axvline(a, color='r')
+     
+     # Show the graph
+     st.pyplot(fig)
+     
+        #DAYS_ID_PUBLISH 
+if st.button('date de MAJ de la pièce identité client - DAYS_ID_PUBLISH'):
+     # Data   
+     DAYS_IDPUBLISH = df[['DAYS_ID_PUBLISH','SK_ID_CURR']].sort_values(by=['DAYS_ID_PUBLISH'])     
+     # Plot
+     fig, ax = plt.subplots(figsize = (12, 12))
+     plt.title('répartition clients par DAYS_ID_PUBLISH')
+     ax.hist(DAYS_IDPUBLISH['DAYS_ID_PUBLISH'], bins=100,edgecolor="black")
+    
+     # # Label and coordinate
+     z=DAYS_IDPUBLISH.loc[df['SK_ID_CURR'] == int(id_input)]
+     a=z['DAYS_ID_PUBLISH'].iloc[0]
+     plt.axvline(a, color='r')
+     
+     # Show the graph
+     st.pyplot(fig)
+     
+#AMT_ANNUITY
+if st.button('Annuité - AMT_ANNUITY'):
+
+    # Data   
+    AMTANNUITY = df[['AMT_ANNUITY','SK_ID_CURR']].sort_values(by=['AMT_ANNUITY'])
+    
+    # Plot
+    fig, ax = plt.subplots(figsize = (12, 12))
+    plt.title('répartition clients par annuité')
+    ax.hist(AMTANNUITY['AMT_ANNUITY'], bins=100,edgecolor="black")
+    
+    # Label and coordinate
+    z=AMTANNUITY.loc[df['SK_ID_CURR'] == int(id_input)]
+    a=z['AMT_ANNUITY'].iloc[0]
+    plt.axvline(a, color='r')
+     
+    # Show the graph
+    st.pyplot(fig)
+    
+ # #Comparaison du client avec les bons payeurs et avec les mauvais payeurs
+ #    st.title('Comparaison du client avec les bons payeurs et avec les mauvais payeurs')
+ #    dataclient = df.loc[df['SK_ID_CURR'] == int(id_input)]
+ #    credit_customer = dataclient[['SK_ID_CURR','AMT_CREDIT','DAYS_BIRTH','EXT_SOURCE_3']]
+ #    st.write(credit_customer)
+    
+ #    st.subheader('Regardons le montant du crédit...')
+ #    st.subheader('pour les BONS PAYEURS')
+ #    credit_pay = df_pay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
+ #    credit_pay.reset_index(0, inplace=True)
+ #    credit_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+ #    chart_data = pd.DataFrame(credit_pay,columns=['AMT_CREDIT'])
+ #    st.line_chart(chart_data)
+    
+ #    st.subheader('pour les MAUVAIS PAYEURS')
+ #    credit_unpay = df_unpay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
+ #    credit_unpay.reset_index(0, inplace=True)
+ #    credit_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+ #    chart_data1 = pd.DataFrame(credit_unpay,columns=['AMT_CREDIT'])
+ #    st.line_chart(chart_data1)
+    
+ #    #AGE
+ #    st.subheader('Regardons leur age...')
+ #    st.subheader('celui des BONS PAYEURS')
+ #    age_pay = df_pay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
+ #    age_pay.reset_index(0, inplace=True)
+ #    age_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+ #    chart_data2 = pd.DataFrame(age_pay,columns=['DAYS_BIRTH'])
+ #    st.line_chart(chart_data2)
+    
+ #    st.subheader('celui des MAUVAIS PAYEURS')
+ #    age_unpay = df_unpay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
+ #    age_unpay.reset_index(0, inplace=True)
+ #    age_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+ #    chart_data3 = pd.DataFrame(age_unpay,columns=['DAYS_BIRTH'])
+ #    st.line_chart(chart_data3)
+    
+ #    #EXT_SOURCE_3
+ #    st.subheader('Regardons EXT_SOURCE_3..')
+ #    st.subheader('celui des BONS PAYEURS')
+ #    EXT_SOURCE_3_pay = df_pay[['SK_ID_CURR','EXT_SOURCE_3']].groupby('EXT_SOURCE_3').count().sort_values(by='SK_ID_CURR', ascending=False)
+ #    EXT_SOURCE_3_pay.reset_index(0, inplace=True)
+ #    EXT_SOURCE_3_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+ #    chart_data3 = pd.DataFrame(EXT_SOURCE_3_pay,columns=['EXT_SOURCE_3'])
+ #    st.line_chart(chart_data3)
+    
+ #    st.subheader('celui des MAUVAIS PAYEURS')
+ #    EXT_SOURCE_3_unpay = df_unpay[['SK_ID_CURR','EXT_SOURCE_3']].groupby('EXT_SOURCE_3').count().sort_values(by='SK_ID_CURR', ascending=False)
+ #    EXT_SOURCE_3_unpay.reset_index(0, inplace=True)
+ #    EXT_SOURCE_3_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
+    
+ #    chart_data4 = pd.DataFrame(EXT_SOURCE_3_unpay,columns=['EXT_SOURCE_3'])
+ #    st.line_chart(chart_data4)
