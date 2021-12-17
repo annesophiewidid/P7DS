@@ -15,52 +15,36 @@ import json
 app = Flask(__name__)
 api = Api(app)
 
-PATH = os.getcwd()
-PATH += "\\"
-f = PATH+'application_train.csv'
+class Prediction(Resource):
+    def get(self, client_id):
+        PATH = os.getcwd()
+        PATH += "\\"
+        f = PATH+'application_train.csv'
 
-df = pd.read_csv(f,
+        df = pd.read_csv(f,
                  low_memory=False,
                  verbose=False,
                  encoding='ISO-8859-1',
                  dtype={'Special': 'object'}
                  )
-X = df.drop(columns=['TARGET'])
-y = df['TARGET']
+        X = df.drop(columns=['TARGET'])
+        y = df['TARGET']
 
-# CLIENTS= {X}
-
-#chargement du preprocessor
-loaded_preprocessor = joblib.load('preprocessor.pkl')
+        #chargement du preprocessor
+        loaded_preprocessor = joblib.load('preprocessor.pkl')
     
-#chargement du modèle
-loaded_model = joblib.load('model.pkl')
+        #chargement du modèle
+        loaded_model = joblib.load('model.pkl')
 
-data_clientunique = X[X['SK_ID_CURR']==100003]
+        data_clientunique = X[X['SK_ID_CURR']==client_id]
      
-data_clientunique=loaded_preprocessor.transform(data_clientunique)
-
-class Prediction(Resource):
-    def get(self, client_id):
+        data_clientunique=loaded_preprocessor.transform(data_clientunique)
         score_client=loaded_model.predict_proba(data_clientunique)
-        response = json.dumps({'response': score_client})
-        return response, 200
+        value = score_client[0][1]*100
+        return value
 
 api.add_resource(Prediction, '/prediction/<int:client_id>/')
 
 if __name__ == '__main__':
     app.run(debug=True)
 
-# @app.route('/predict', methods=['GET'])
-# def predict():
-#     # parse input features from request
-#     request_json = request.get_json()
-#     x = float(request_json['input'])
- 
-#     # load model
-#     model = load_models()
-#     prediction = model.predict([[x]])[0]
-#     response = json.dumps({'response': prediction})
-#     return response, 200
-# if __name__ == '__main__':
-#     application.run(debug=True)
