@@ -76,21 +76,21 @@ elif (int(id_input) in liste_id):
 
     st.subheader("Probabilité que votre client soit en défaut de paiement (classe 1) ou non (classe 0)")
 
-# #chargement du preprocessor
-#     loaded_preprocessor = joblib.load('preprocessor.pkl')
+#chargement du preprocessor
+    loaded_preprocessor = joblib.load('preprocessor.pkl')
     
-# #chargement du modèle
-#     loaded_model = joblib.load('model.pkl')
+#chargement du modèle
+    loaded_model = joblib.load('model.pkl')
     
-#     data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
+    data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
      
-#     data_clientunique=loaded_preprocessor.transform(data_clientunique)
+    data_clientunique=loaded_preprocessor.transform(data_clientunique)
         
-#     score_client=loaded_model.predict_proba(data_clientunique)
+    score_client=loaded_model.predict_proba(data_clientunique)
     
-    url=f"http://127.0.0.1:5000/prediction/{id_input}/"
-    response=requests.get(url)
-    score_client=float(response.content)
+    # url=f"http://127.0.0.1:5000/prediction/{id_input}/"
+    # response=requests.get(url)
+    # score_client=float(response.content)
     
 #affichage de la jauge de probabilité  
     jauge = go.Figure(go.Indicator(
@@ -111,11 +111,11 @@ elif (int(id_input) in liste_id):
     st.subheader('Traduction des explications avec Shap')
 
 #chargement du modèle
-    loaded_preprocessor = joblib.load('preprocessor.pkl')    
-    loaded_model = joblib.load('model.pkl')
-    data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
-    data_clientunique=loaded_preprocessor.transform(data_clientunique)    
-    explainer = shap.TreeExplainer(loaded_model)
+    # loaded_preprocessor = joblib.load('preprocessor.pkl')    
+    # loaded_model = joblib.load('model.pkl')
+    # data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
+    # data_clientunique=loaded_preprocessor.transform(data_clientunique)    
+    # explainer = shap.TreeExplainer(loaded_model)
 #calcul des valeurs Shap
     shap_values = explainer.shap_values(data_clientunique)
     
