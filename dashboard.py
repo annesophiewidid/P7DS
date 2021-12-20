@@ -39,14 +39,12 @@ PATH = os.getcwd()
 PATH += "\\"
 f = PATH+'application_train.csv'
 
-df = pd.read_csv(f)
-
-# df = pd.read_csv(f,
-#                  low_memory=False,
-#                  verbose=False,
-#                  encoding='ISO-8859-1',
-#                  dtype={'Special': 'object'}
-#                  )
+df = pd.read_csv(f,
+                  low_memory=False,
+                  verbose=False,
+                  encoding='ISO-8859-1',
+                  dtype={'Special': 'object'}
+                  )
 
 liste_id = df['SK_ID_CURR'].tolist()
 
