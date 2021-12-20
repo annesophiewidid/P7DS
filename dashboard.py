@@ -39,8 +39,7 @@ PATH = os.getcwd()
 PATH += "\\"
 f = PATH+'application_train.csv'
 
-df = pd.read_csv(f,
-                 low_memory=False)
+df = pd.read_csv(f)
 
 # df = pd.read_csv(f,
 #                  low_memory=False,
