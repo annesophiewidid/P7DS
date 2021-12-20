@@ -40,8 +40,7 @@ PATH += "\\"
 f = PATH+'application_train.csv'
 
 df = pd.read_csv(f,
-                 low_memory=False,
-                 verbose=False)
+                 low_memory=False)
 
 # df = pd.read_csv(f,
 #                  low_memory=False,
