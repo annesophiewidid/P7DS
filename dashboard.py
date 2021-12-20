@@ -41,9 +41,7 @@ f = PATH+'application_train.csv'
 
 df = pd.read_csv(f,
                  low_memory=False,
-                 verbose=False,
-                 encoding='ISO-8859-1',
-                                  )
+                 verbose=False)
 
 # df = pd.read_csv(f,
 #                  low_memory=False,
