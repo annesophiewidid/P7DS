@@ -10,25 +10,23 @@ Created on Tue Nov 30 12:02:43 2021
 # mise en place de l'environnement Python
 import os
 import streamlit as st
-import streamlit.components.v1 as components
 import pandas as pd
 import shap
 import matplotlib.pyplot as plt
 import joblib
-from sklearn import metrics
-import numpy as np
-import plotly.graph_objects as go
-import urllib
-import pickle
-import seaborn as sns
+# from sklearn import metrics
+# import numpy as np
+# import plotly.graph_objects as go
+from plotly import graph_objs as go
+# import urllib
+# import pickle
+# import seaborn as sns
 import requests
 
 st.set_page_config(page_title='Loan application scoring dashboard',
                        page_icon='random',
                        layout='centered',
                        initial_sidebar_state='auto')
-
-
 
 st.write("""
 # "Prêt à dépenser" Prediction App
@@ -79,20 +77,38 @@ elif (int(id_input) in liste_id):
 #chargement du preprocessor
     loaded_preprocessor = joblib.load('preprocessor.pkl')
     
+
+#FONCTIONNEMENT SANS API FLASK 
 #chargement du modèle
-    loaded_model = joblib.load('model.pkl')
+    # loaded_model = joblib.load('model.pkl')
     
-    data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
+    # data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
      
-    data_clientunique=loaded_preprocessor.transform(data_clientunique)
+    # data_clientunique=loaded_preprocessor.transform(data_clientunique)
         
-    score_client=loaded_model.predict_proba(data_clientunique)
+    # score_client=loaded_model.predict_proba(data_clientunique)
     
-    # url=f"http://127.0.0.1:5000/prediction/{id_input}/"
-    # response=requests.get(url)
-    # score_client=float(response.content)
+    # jauge = go.Figure(go.Indicator(
+    # domain = {'x': [0, 1], 'y': [0, 1]},
+    # value = score_client[0][1]*100,
+    # mode = "gauge+number",
+    # title = {'text': "Jauge de Probabilité de défaut de paiement (en pourcentage)"},
+    # gauge = {'axis': {'range': [None, 100]},
+    #           'bar': {'color': "darkgrey"},
+    #           'bgcolor': "red",
+    #           'steps' : [
+    #               {'range': [0, 35], 'color': "green"},
+    #               {'range': [35, 60], 'color': "orange"}],
+    #           'threshold' : {'line': {'color': "black", 'width': 4}, 'thickness': 0.75, 'value': 50}}))
+    # st.write(jauge)
+   
+#FONCTIONNEMENT SANS API FLASK 
     
-#affichage de la jauge de probabilité  
+    url=f"http://127.0.0.1:5000/prediction/{id_input}/"
+    response=requests.get(url)
+    score_client=float(response.content)
+       
+    
     jauge = go.Figure(go.Indicator(
     domain = {'x': [0, 1], 'y': [0, 1]},
     value = score_client,
@@ -111,12 +127,13 @@ elif (int(id_input) in liste_id):
     st.subheader('Traduction des explications avec Shap')
 
 #chargement du modèle
-    # loaded_preprocessor = joblib.load('preprocessor.pkl')    
-    # loaded_model = joblib.load('model.pkl')
-    # data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
-    # data_clientunique=loaded_preprocessor.transform(data_clientunique)    
-    # explainer = shap.TreeExplainer(loaded_model)
+    loaded_preprocessor = joblib.load('preprocessor.pkl')    
+    loaded_model = joblib.load('model.pkl')
+    data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
+    data_clientunique=loaded_preprocessor.transform(data_clientunique)    
+    
 #calcul des valeurs Shap
+    explainer = shap.TreeExplainer(loaded_model)
     shap_values = explainer.shap_values(data_clientunique)
     
 # Chargement de la liste de features
