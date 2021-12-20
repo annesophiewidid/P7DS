@@ -6,11 +6,11 @@ Created on Mon Dec  6 19:17:59 2021
 """
 
 from flask import Flask
-from flask_restful import Resource, Api, abort
+from flask_restful import Resource, Api
 import os
 import pandas as pd
 import joblib
-import json
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -28,7 +28,7 @@ class Prediction(Resource):
                  dtype={'Special': 'object'}
                  )
         X = df.drop(columns=['TARGET'])
-        y = df['TARGET']
+        # y = df['TARGET']
 
         #chargement du preprocessor
         loaded_preprocessor = joblib.load('preprocessor.pkl')
@@ -46,5 +46,6 @@ class Prediction(Resource):
 api.add_resource(Prediction, '/prediction/<int:client_id>/')
 
 if __name__ == '__main__':
+
     app.run(debug=True)
 
