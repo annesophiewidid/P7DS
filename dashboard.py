@@ -22,6 +22,9 @@ from plotly import graph_objs as go
 # import pickle
 # import seaborn as sns
 import requests
+from subprocess import Popen
+import time
+
 
 st.set_page_config(page_title='Loan application scoring dashboard',
                        page_icon='random',
@@ -42,7 +45,7 @@ st.write('---')
 df = pd.read_csv("application_train.csv",
                   low_memory=False,
                   verbose=False,
-                  encoding='ISO-8859-1',
+                  encoding='UTF-8',
                   dtype={'Special': 'object'}
                   )
 
@@ -69,8 +72,11 @@ chaine_en_defaut = 'Exemples d\'id de clients en défaut : ' + sample_en_defaut
 if id_input == '': #lorsque rien n'a été saisi
     st.write(chaine_en_defaut)
     st.write(chaine_en_regle)
+    
+elif (id_input not in liste_id):   
+    st.write('je ne connais pas cet id')
 
-elif (int(id_input) in liste_id): 
+elif (id_input in liste_id): 
 
     st.subheader("Probabilité que votre client soit en défaut de paiement (classe 1) ou non (classe 0)")
 
@@ -105,8 +111,17 @@ elif (int(id_input) in liste_id):
 #FONCTIONNEMENT avec API FLASK 
     
     url=f"http://127.0.0.1:5000/prediction/{id_input}/"
-    response=requests.get(url)
+    try:
+        response=requests.get(url)
+    except requests.exceptions.ConnectionError:
+        st.error("flask n est pas allumé")
+        process = Popen(["python", "api.py"], shell=True)
+        time.sleep(5)
+        response=requests.get(url)
+        
     score_client=float(response.content)
+    
+
        
     
     jauge = go.Figure(go.Indicator(
@@ -129,7 +144,7 @@ elif (int(id_input) in liste_id):
 #chargement du modèle
     loaded_preprocessor = joblib.load('preprocessor.pkl')    
     loaded_model = joblib.load('model.pkl')
-    data_clientunique = X[X['SK_ID_CURR']==int(id_input)]
+    data_clientunique = X[X['SK_ID_CURR']==(id_input)]
     data_clientunique=loaded_preprocessor.transform(data_clientunique)    
     
 #calcul des valeurs Shap
@@ -171,7 +186,7 @@ if st.button('Montant du crédit - AMT CREDIT'):
     ax.hist(credit['AMT_CREDIT'], bins=100,edgecolor="black")
     
     # Label and coordinate
-    z=credit.loc[df['SK_ID_CURR'] == int(id_input)]
+    z=credit.loc[df['SK_ID_CURR'] == (id_input)]
     a=z['AMT_CREDIT'].iloc[0]
     plt.axvline(a, color='r')
      
@@ -190,7 +205,7 @@ if st.button('Age du client - DAYS_BIRTH'):
     ax.hist(daysbirth['DAYS_BIRTH'], bins=100,edgecolor="black")
     
     # Label and coordinate
-    z=daysbirth.loc[df['SK_ID_CURR'] == int(id_input)]
+    z=daysbirth.loc[df['SK_ID_CURR'] == (id_input)]
     a=z['DAYS_BIRTH'].iloc[0]
     plt.axvline(a, color='r')
      
@@ -208,7 +223,7 @@ if st.button('Source externe 3 - EXT_SOURCE_3'):
      ax.hist(extsource3['EXT_SOURCE_3'], bins=100,edgecolor="black")
     
      # # Label and coordinate
-     z=extsource3.loc[df['SK_ID_CURR'] == int(id_input)]
+     z=extsource3.loc[df['SK_ID_CURR'] == (id_input)]
      a=z['EXT_SOURCE_3'].iloc[0]
      plt.axvline(a, color='r')
      
@@ -225,7 +240,7 @@ if st.button('date de MAJ de la pièce identité client - DAYS_ID_PUBLISH'):
      ax.hist(DAYS_IDPUBLISH['DAYS_ID_PUBLISH'], bins=100,edgecolor="black")
     
      # # Label and coordinate
-     z=DAYS_IDPUBLISH.loc[df['SK_ID_CURR'] == int(id_input)]
+     z=DAYS_IDPUBLISH.loc[df['SK_ID_CURR'] == (id_input)]
      a=z['DAYS_ID_PUBLISH'].iloc[0]
      plt.axvline(a, color='r')
      
@@ -244,7 +259,7 @@ if st.button('Annuité - AMT_ANNUITY'):
     ax.hist(AMTANNUITY['AMT_ANNUITY'], bins=100,edgecolor="black")
     
     # Label and coordinate
-    z=AMTANNUITY.loc[df['SK_ID_CURR'] == int(id_input)]
+    z=AMTANNUITY.loc[df['SK_ID_CURR'] == (id_input)]
     a=z['AMT_ANNUITY'].iloc[0]
     plt.axvline(a, color='r')
      
