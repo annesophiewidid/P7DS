@@ -17,14 +17,14 @@ api = Api(app)
 
 class Prediction(Resource):
     def get(self, client_id):
-        PATH = os.getcwd()
-        PATH += "\\"
-        f = PATH+'application_train.csv'
+        # PATH = os.getcwd()
+        # PATH += "\\"
+        # f = PATH+'application_train.csv'
 
-        df = pd.read_csv(f,
+        df = pd.read_csv('application_train.csv',
                  low_memory=False,
                  verbose=False,
-                 encoding='ISO-8859-1',
+                 encoding='UTF-8',
                  dtype={'Special': 'object'}
                  )
         X = df.drop(columns=['TARGET'])
@@ -36,7 +36,7 @@ class Prediction(Resource):
         #chargement du modèle
         loaded_model = joblib.load('model.pkl')
 
-        data_clientunique = X[X['SK_ID_CURR']==client_id]
+        data_clientunique = X[X['SK_ID_CURR']==str(client_id)]
      
         data_clientunique=loaded_preprocessor.transform(data_clientunique)
         score_client=loaded_model.predict_proba(data_clientunique)
