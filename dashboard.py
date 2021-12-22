@@ -156,11 +156,11 @@ elif (id_input in liste_id):
     shap_values = explainer.shap_values(data_clientunique)
     
 # Chargement de la liste de features
-    PATH = os.getcwd()
-    PATH += "\\"
-    h = PATH+'FEATURELIST.csv'
+    # PATH = os.getcwd()
+    # PATH += "\\"
+    # h = PATH+'FEATURELIST.csv'
 
-    FEATURELIST = pd.read_csv(h,
+    FEATURELIST = pd.read_csv("FEATURELIST.csv",
                   low_memory=False,
                   verbose=False,
                   encoding='ISO-8859-1',
