@@ -35,10 +35,11 @@ Cette application prédit la probabilité de défaut de paiement si vous octroye
 st.write('---')
 
 # Loads the pret a depenser Dataset
-PATH = os.getcwd()
-f = os.path.join(PATH,"application_train.csv")
+# PATH = os.getcwd()
+# f = os.path.join(PATH,"application_train.csv")
 
-df = pd.read_csv(f,
+
+df = pd.read_csv("application_train.csv",
                   low_memory=False,
                   verbose=False,
                   encoding='ISO-8859-1',
