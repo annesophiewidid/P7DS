@@ -36,8 +36,7 @@ st.write('---')
 
 # Loads the pret a depenser Dataset
 PATH = os.getcwd()
-PATH += "\\"
-f = PATH+'application_train.csv'
+f = os.path.join(PATH,"application_train.csv")
 
 df = pd.read_csv(f,
                   low_memory=False,
