@@ -110,14 +110,18 @@ elif (id_input in liste_id):
    
 #FONCTIONNEMENT avec API FLASK 
     
-    url=f"http://127.0.0.1:5000/prediction/{id_input}/"
-    try:
-        response=requests.get(url)
-    except requests.exceptions.ConnectionError:
-        st.error("flask n est pas allumé")
-        process = Popen(["python", "api.py"], shell=True)
-        time.sleep(5)
-        response=requests.get(url)
+    # url=f"http://127.0.0.1:5000/prediction/{id_input}/"
+    
+    url= f"http://annesophiegimenez.pythonanywhere.com/prediction/{id_input}/"
+    
+    # try:
+    #     response=requests.get(url)
+    # except requests.exceptions.ConnectionError:
+    #     st.error("flask n est pas allumé")
+    #     process = Popen(["python", "api.py"], shell=True)
+    #     time.sleep(5)
+    
+    response=requests.get(url)
         
     score_client=float(response.content)
     
