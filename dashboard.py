@@ -14,13 +14,7 @@ import pandas as pd
 import shap
 import matplotlib.pyplot as plt
 import joblib
-# from sklearn import metrics
-# import numpy as np
-# import plotly.graph_objects as go
 from plotly import graph_objs as go
-# import urllib
-# import pickle
-# import seaborn as sns
 import requests
 from subprocess import Popen
 import time
@@ -59,7 +53,7 @@ y = df['TARGET']
 #affichage formulaire
 st.title('Calculez le score de votre client')
 st.subheader("Prédictions de scoring client")
-id_input = st.text_input('Veuillez saisir l\'identifiant de\'votre client:', )
+id_input = st.text_input('Veuillez saisir l\'identifiant de\ votre client:', )
 chaine = "l'id Saisi est " + str(id_input)
 
 st.write(chaine)
@@ -270,61 +264,3 @@ if st.button('Annuité - AMT_ANNUITY'):
     # Show the graph
     st.pyplot(fig)
     
- # #Comparaison du client avec les bons payeurs et avec les mauvais payeurs
- #    st.title('Comparaison du client avec les bons payeurs et avec les mauvais payeurs')
- #    dataclient = df.loc[df['SK_ID_CURR'] == int(id_input)]
- #    credit_customer = dataclient[['SK_ID_CURR','AMT_CREDIT','DAYS_BIRTH','EXT_SOURCE_3']]
- #    st.write(credit_customer)
-    
- #    st.subheader('Regardons le montant du crédit...')
- #    st.subheader('pour les BONS PAYEURS')
- #    credit_pay = df_pay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
- #    credit_pay.reset_index(0, inplace=True)
- #    credit_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
- #    chart_data = pd.DataFrame(credit_pay,columns=['AMT_CREDIT'])
- #    st.line_chart(chart_data)
-    
- #    st.subheader('pour les MAUVAIS PAYEURS')
- #    credit_unpay = df_unpay[['SK_ID_CURR','AMT_CREDIT']].groupby('AMT_CREDIT').count().sort_values(by='SK_ID_CURR', ascending=False)
- #    credit_unpay.reset_index(0, inplace=True)
- #    credit_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
- #    chart_data1 = pd.DataFrame(credit_unpay,columns=['AMT_CREDIT'])
- #    st.line_chart(chart_data1)
-    
- #    #AGE
- #    st.subheader('Regardons leur age...')
- #    st.subheader('celui des BONS PAYEURS')
- #    age_pay = df_pay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
- #    age_pay.reset_index(0, inplace=True)
- #    age_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
- #    chart_data2 = pd.DataFrame(age_pay,columns=['DAYS_BIRTH'])
- #    st.line_chart(chart_data2)
-    
- #    st.subheader('celui des MAUVAIS PAYEURS')
- #    age_unpay = df_unpay[['SK_ID_CURR','DAYS_BIRTH']].groupby('DAYS_BIRTH').count().sort_values(by='SK_ID_CURR', ascending=False)
- #    age_unpay.reset_index(0, inplace=True)
- #    age_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
- #    chart_data3 = pd.DataFrame(age_unpay,columns=['DAYS_BIRTH'])
- #    st.line_chart(chart_data3)
-    
- #    #EXT_SOURCE_3
- #    st.subheader('Regardons EXT_SOURCE_3..')
- #    st.subheader('celui des BONS PAYEURS')
- #    EXT_SOURCE_3_pay = df_pay[['SK_ID_CURR','EXT_SOURCE_3']].groupby('EXT_SOURCE_3').count().sort_values(by='SK_ID_CURR', ascending=False)
- #    EXT_SOURCE_3_pay.reset_index(0, inplace=True)
- #    EXT_SOURCE_3_pay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
- #    chart_data3 = pd.DataFrame(EXT_SOURCE_3_pay,columns=['EXT_SOURCE_3'])
- #    st.line_chart(chart_data3)
-    
- #    st.subheader('celui des MAUVAIS PAYEURS')
- #    EXT_SOURCE_3_unpay = df_unpay[['SK_ID_CURR','EXT_SOURCE_3']].groupby('EXT_SOURCE_3').count().sort_values(by='SK_ID_CURR', ascending=False)
- #    EXT_SOURCE_3_unpay.reset_index(0, inplace=True)
- #    EXT_SOURCE_3_unpay.rename(columns={'SK_ID_CURR':'nombre'}, inplace=True)
-    
- #    chart_data4 = pd.DataFrame(EXT_SOURCE_3_unpay,columns=['EXT_SOURCE_3'])
- #    st.line_chart(chart_data4)
